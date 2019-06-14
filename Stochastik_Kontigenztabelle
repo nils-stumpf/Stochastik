@@ -1,0 +1,91 @@
+package Bonusaufgaben2;
+
+public class Kontigenztabelle {
+	
+	private int[][] tabelle;
+	private int n;
+	private int[] randverteilung;
+	private int[][] erwartungswerte;
+	int chiQuad;
+	int cmn;
+	double cMax;
+	double c;
+	double cKorr;
+	
+	
+	public Kontigenztabelle() {
+		
+	}
+	public Kontigenztabelle(int[][] tabelle) {
+		this.tabelle = tabelle;	
+		
+	}
+	public int[] randverteilung() {
+		randverteilung = new int[tabelle.length+tabelle[0].length];
+		
+		
+		for(int i = 0; i<tabelle.length; i++) {			//Schleife für die Zeilen
+			int sum = 0;
+			for(int j = 0; j< tabelle[0].length; j++) {	//Schleife für die Spalten
+				sum += tabelle[i][j];
+			}
+			randverteilung[i] = sum;	
+		}	
+		for(int i = 0; i< tabelle[0].length; i++) {
+			int sum = 0;
+			for(int j = 0; j<tabelle.length; j++) {
+				sum += tabelle[j][i]; 
+			}
+			randverteilung[i+tabelle.length] = sum;
+		}
+		for(int e : randverteilung) {
+			n += e;
+		}
+		n /= 2;
+		//System.out.println("n:" +n);
+		return randverteilung;
+	}
+	
+	public int[][] Erwartungswerte() {
+		erwartungswerte = new int[tabelle.length][tabelle[0].length];
+		for(int i = 0; i<tabelle.length; i++) {			//Schleife für die Zeilen
+			for(int j = 0; j< tabelle[0].length; j++) {	//Schleife für die Spalten
+				erwartungswerte[i][j] = (randverteilung[i]*randverteilung[j+tabelle.length])/n;
+			}
+		}
+		return erwartungswerte;
+	}
+	public int chiQuad() {	
+		for(int i = 0; i<tabelle.length; i++) {			//Schleife für die Zeilen
+			for(int j = 0; j< tabelle[0].length; j++) {
+				chiQuad += ((tabelle[i][j]-erwartungswerte[i][j])*(tabelle[i][j]-erwartungswerte[i][j]))/erwartungswerte[i][j];
+			}
+		}
+		return chiQuad;
+	}
+	public int cmn() {
+		
+		if(tabelle.length> tabelle[0].length) {
+			cmn = tabelle[0].length;
+		}
+		else {
+			cmn = tabelle.length;
+		}
+		return cmn;
+	}
+	public double cMax() {
+		cMax = Math.sqrt(((double)cmn-1)/(double)cmn);
+		
+		return cMax;
+	}
+	public double c() {
+		c = Math.sqrt((double)chiQuad/((double)chiQuad+n));
+		return c;
+	}
+	public double cKorr() {
+		cKorr = (double)c/(double)cMax;
+		return cKorr;
+	}
+	
+	
+}
